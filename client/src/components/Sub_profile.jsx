@@ -3,7 +3,7 @@ import profile_cover from "../assets/profile_cover.jpg";
 
 const Sub_profile = () => {
   return (
-    <div className="bg-dark-background  rounded shadow-lg">
+    <div className="Sub_profile bg-dark-background rounded ">
       <div className="relative">
         <img
           src={profile_cover}
@@ -16,11 +16,13 @@ const Sub_profile = () => {
         <div className="h-4 relative flex justify-center">
           <img
             src={profile_cover}
-            className="absolute bottom-0 w-20 rounded h-20 shadow-lg"
+            className="absolute bottom-0 w-20 rounded-full h-20 shadow-lg"
             alt=""
           />
         </div>
-        <div className="text-center my-2 text-xl">Mouharch Choaib</div>
+        <div className="text-center my-2 text-xl text-pure-white font-semibold">
+          <span className="text-primary">Mouharch</span> Choaib
+        </div>
         <div className="grid grid-cols-3 text-center gap-2 py-4 text-sm lg:text-md">
           <div className="border-r-2">
             <p>400+</p>

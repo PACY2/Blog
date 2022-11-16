@@ -8,12 +8,37 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import Nav_item from "./Nav_item";
 import Nav_item_dp from "./Nav_item_dp";
+import gsap from "gsap";
+import { useLayoutEffect } from "react";
 
 const Navbar = () => {
+  const nav = useRef();
+
+  useLayoutEffect(() => {
+    let ctx = gsap.context(() => {
+      gsap.fromTo(
+        nav.current,
+        {
+          translateX: -40,
+          opacity: 0,
+        },
+        {
+          translateX: 0,
+          opacity: 1,
+          delay: 0.3,
+        }
+      );
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <nav className="w-16 bg-dark-background p-2 flex flex-col justify-between">
+    <nav
+      ref={nav}
+      className="w-14 bg-dark-background p-2 flex flex-col justify-between"
+    >
       <div className="flex flex-col gap-2">
-        <div className="bg-primary h-12 flex justify-center items-center text-2xl text-pure-white rounded">
+        <div className="bg-primary h-10 flex justify-center items-center text-2xl text-pure-white rounded">
           <MdRoomService />
         </div>
         <Nav_item to="/login" text={<BiPlus />} desc="Add new post" />

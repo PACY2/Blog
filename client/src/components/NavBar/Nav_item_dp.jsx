@@ -20,7 +20,7 @@ const Nav_item_dp = ({ children, icon }) => {
   }, [dp_hidden]);
 
   return (
-    <div className="group relative bg-background h-12 flex justify-center text-lg items-center text-pure-white rounded">
+    <div className="group relative bg-background h-10 flex justify-center text-lg items-center text-pure-white rounded">
       <button
         ref={button}
         onClick={() => set_dp_hidden(!dp_hidden)}

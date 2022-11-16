@@ -3,7 +3,7 @@ import { BsTriangleFill } from "react-icons/bs";
 
 const Nav_item = ({ to, text, desc }) => {
   return (
-    <div className="group relative bg-background h-12 flex justify-center text-lg items-center rounded">
+    <div className="group relative bg-background h-10 flex justify-center text-lg items-center rounded">
       <Link
         to={to}
         className="group-hover:text-primary flex items-center justify-center w-full h-full text-pure-white"

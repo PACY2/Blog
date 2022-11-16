@@ -2,7 +2,10 @@ import React from "react";
 
 const Input = (props) => {
   return (
-    <div className="border-dark-background rounded focus:border-primary bg-dark-background border-2 flex items-center">
+    <div
+      id={props.id ?? null}
+      className="border-dark-background rounded focus:border-primary bg-dark-background border-2 flex items-center"
+    >
       <input
         onChange={props.onChange ?? null}
         placeholder={`${props.placeholder ? props.placeholder + "..." : ""}`}
