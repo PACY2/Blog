@@ -45,10 +45,8 @@ const Home = () => {
         }
       />
       <div className="h-full grid lg:grid-cols-4 overflow-y-scroll gap-2 scrollbar pr-2">
-        <div className=" lg:col-start-1 lg:col-end-4 grid lg:grid-cols-2 gap-2 ">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((e) => (
-            <Post_card />
-          ))}
+        <div className=" lg:col-start-1 lg:col-end-4 grid xl:grid-cols-2 gap-2 ">
+          <Post_card />
         </div>
         <div className="right-side row-start-1  lg:col-start-4 lg:col-end-5 flex flex-col gap-2">
           <Sub_profile />

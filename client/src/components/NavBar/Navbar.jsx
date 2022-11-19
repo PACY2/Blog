@@ -10,9 +10,13 @@ import Nav_item from "./Nav_item";
 import Nav_item_dp from "./Nav_item_dp";
 import gsap from "gsap";
 import { useLayoutEffect } from "react";
+import { logout, fetch_user_state } from "../../features/Auth/UserSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Navbar = () => {
   const nav = useRef();
+  const dispatch = useDispatch();
+  const user_data = useSelector(fetch_user_state);
 
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
@@ -32,6 +36,10 @@ const Navbar = () => {
     return () => ctx.revert();
   }, []);
 
+  function log_out() {
+    dispatch(logout());
+  }
+
   return (
     <nav
       ref={nav}
@@ -45,24 +53,39 @@ const Navbar = () => {
       </div>
       <div>
         <Nav_item_dp icon={<BiUser />}>
-          <Link
-            className="text-pure-white hover:bg-white hover:text-dark-background rounded transition duration-200 py-1 pl-2 pr-3"
-            to="/login"
-          >
-            Login
-          </Link>
-          <Link
-            className="text-pure-white hover:bg-white hover:text-dark-background rounded transition duration-200 py-1 pl-2 pr-3"
-            to="/register"
-          >
-            Register
-          </Link>
-          <Link
-            className="text-pure-white hover:bg-white hover:text-dark-background rounded transition duration-200 py-1 pl-2 pr-3"
-            to="/logout"
-          >
-            Logout
-          </Link>
+          {!user_data.user && (
+            <>
+              <Link
+                className="text-pure-white hover:text-primary font-semibold rounded transition duration-200 py-1 pl-2 pr-3"
+                to="/login"
+              >
+                Login
+              </Link>
+              <Link
+                className="text-pure-white hover:text-primary font-semibold rounded transition duration-200 py-1 pl-2 pr-3"
+                to="/register"
+              >
+                Register
+              </Link>
+            </>
+          )}
+          {user_data.user && (
+            <>
+              <Link
+                className="text-pure-white hover:text-primary font-semibold rounded transition duration-200 py-1 pl-2 pr-3"
+                to="/profile"
+              >
+                Profile
+              </Link>
+              <button
+                onClick={() => log_out()}
+                className="text-pure-white hover:text-primary font-semibold  rounded  py-1 pl-2 pr-3 shadow-lg"
+                to="/logout"
+              >
+                Logout
+              </button>
+            </>
+          )}
         </Nav_item_dp>
       </div>
     </nav>

@@ -1,66 +1,208 @@
+import { SiSpinrilla } from "react-icons/si";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { MdRoomService } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import auth from "../../assets/auth.jpg";
+import { useSelector, useDispatch } from "react-redux";
+import { fetch_user_state, register } from "./UserSlice";
+import { useFormik } from "formik";
+import Input from "../../components/Input";
+import * as yup from "yup";
+import differenceInYears from "date-fns/differenceInYears";
 
 const Register = () => {
+  const dispatch = useDispatch();
+  const user_data = useSelector(fetch_user_state);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      firstname: "",
+      lastname: "",
+      username: "",
+      birthday: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
+    },
+    validationSchema: yup.object({
+      firstname: yup
+        .string()
+        .min(3, "The First Name should be at least 3 characters long")
+        .required("The First Name is required"),
+      lastname: yup
+        .string()
+        .min(3, "The First Name should be at least 3 characters long")
+        .required("The Last Name is required"),
+      username: yup
+        .string()
+        .min(3, "The First Name should be at least 3 characters long")
+        .required("The Username Name is required"),
+      birthday: yup
+        .date()
+        .required("The Birthdate is required")
+        .test(
+          "birthday",
+          "You should be at least 18",
+          (value) => differenceInYears(new Date(), new Date(value)) >= 18
+        ),
+      email: yup
+        .string()
+        .email("The Email Address is not valid")
+        .required("The Email Address is required"),
+      password: yup
+        .string()
+        .min(8, "The Password should be at least 8 characters long")
+        .required("The Password is required"),
+      password_confirmation: yup
+        .string()
+        .min(
+          8,
+          "The Password Confirmation should be at least 8 characters long"
+        )
+        .required("The Password confirmation is required"),
+    }),
+    onSubmit: (values, { setSubmitting }) => {
+      setSubmitting(false);
+      dispatch(register(values));
+    },
+  });
+
+  useEffect(() => {
+    if (user_data.errors) {
+      Object.keys(user_data.errors).forEach((key) => {
+        formik.setFieldError(key, user_data.errors[key][0]);
+      });
+    }
+
+    if (user_data.user) {
+      const path = "/";
+
+      if (location.state && location.state.from) {
+        path =
+          location.state.from.pathname + (location.state.from.search ?? "");
+      }
+
+      navigate(path, { replace: true });
+    }
+  }, [user_data]);
+
   return (
     <div className="w-full lg:grid lg:grid-cols-2">
       <div className="w-full h-full flex flex-col justify-center  items-center px-4">
-        <form className="flex flex-col  gap-3 w-full max-w-lg">
+        <form
+          onSubmit={formik.handleSubmit}
+          className="flex flex-col  gap-3 w-full max-w-lg"
+        >
           <h2 className="text-8xl  flex justify-center items-center ">
             <Link to="/" className="text-pure-white">
               <MdRoomService />
             </Link>
           </h2>
           <div className="grid md:grid-cols-2 gap-2">
-            <input
-              placeholder="First Name..."
-              className="outline-none border-2 border-dark-background  bg-dark-background p-3 rounded"
-              type="text"
+            <Input
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              placeholder="First Name"
               name="firstname"
+              errors={
+                formik.errors &&
+                formik.touched.firstname &&
+                formik.errors.firstname
+              }
             />
-            <input
+            <Input
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              placeholder="Last Name"
               name="lastname"
-              placeholder="Last Name..."
-              className="outline-none border-2 border-dark-background focus:border-primary bg-dark-background p-3 rounded"
-              type="text"
+              errors={
+                formik.errors &&
+                formik.touched.lastname &&
+                formik.errors.lastname
+              }
             />
-            <input
+            <Input
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              placeholder="Username"
               name="username"
-              placeholder="Username..."
-              className="outline-none border-2 border-dark-background focus:border-primary bg-dark-background p-3 rounded"
-              type="text"
+              errors={
+                formik.errors &&
+                formik.touched.username &&
+                formik.errors.username
+              }
             />
-            <input
-              placeholder="Email Address..."
-              className="outline-none border-2 border-dark-background focus:border-primary bg-dark-background p-3 rounded"
+            <Input
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              placeholder="Birthday"
+              type="date"
+              name="birthday"
+              errors={
+                formik.errors &&
+                formik.touched.birthday &&
+                formik.errors.birthday
+              }
+            />
+            <Input
+              className="col-start-1 col-end-3"
+              placeholder="Email Address"
               type="email"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
               name="email"
+              errors={
+                formik.errors && formik.touched.email && formik.errors.email
+              }
             />
-            <input
+            <Input
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type="password"
+              placeholder="Password"
               name="password"
-              placeholder="Password..."
-              className="outline-none border-2 border-dark-background focus:border-primary bg-dark-background p-3 rounded"
-              type="password"
+              errors={
+                formik.errors &&
+                formik.touched.password &&
+                formik.errors.password
+              }
             />
-            <input
+            <Input
+              placeholder="Confirm Password"
               name="password_confirmation"
-              placeholder="Password..."
-              className="outline-none border-2 border-dark-background focus:border-primary bg-dark-background p-3 rounded"
               type="password"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              errors={
+                formik.errors &&
+                formik.touched.password_confirmation &&
+                formik.errors.password_confirmation
+              }
             />
           </div>
           <div className="flex justify-center">
-            <button className="bg-primary w-full p-2 rounded max-w-[60%] text-pure-white hover:opacity-90">
-              Register
+            <button
+              type="submit"
+              className="bg-primary w-full p-2 flex items-center justify-center rounded max-w-[60%] text-pure-white hover:opacity-90"
+            >
+              {user_data.register_status === "loading" ? (
+                <SiSpinrilla className="animate-spin" />
+              ) : (
+                "Register"
+              )}
             </button>
           </div>
         </form>
         <div className="py-4">
           <p>
-            Already have an account ? <Link to="/login">Login</Link>
+            Already have an account ?{" "}
+            <Link to="/login" state={{ from: location }} replace>
+              Login
+            </Link>
           </p>
         </div>
       </div>

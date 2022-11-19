@@ -8,8 +8,13 @@ const Useful_tags = () => {
           Useful <span className="text-primary">Tags</span>
         </h4>
         <div className="flex flex-wrap gap-2 ">
-          {[1, 2, 3, 4, 5, 6, 4, 8].map((e) => (
-            <div className="p-1 bg-background rounded text-sm">Mouhrach</div>
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((e) => (
+            <div
+              key={"mouhrach" + e}
+              className="p-1 bg-background rounded text-sm"
+            >
+              Mouhrach
+            </div>
           ))}
         </div>
       </div>
