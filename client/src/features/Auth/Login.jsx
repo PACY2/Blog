@@ -109,6 +109,9 @@ const Login = () => {
         </form>
 
         <div className="text-center p-4">
+          <Link to="/forget-password" state={{ from: location }} replace>
+            Forget Password ?
+          </Link>
           <p>
             Dont have an account ?{" "}
             <Link to="/register" state={{ from: location }} replace>

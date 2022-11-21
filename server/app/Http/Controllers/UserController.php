@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Mail\TestMail;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 
 class UserController extends Controller
 {
@@ -21,6 +24,40 @@ class UserController extends Controller
     public function index()
     {
         return User::get();
+    }
+
+    public function forget_password(Request $request)
+    {
+        $validated = $request->validate(["email" => ["required", "email", "exists:users,email"]]);
+        $status = Password::sendResetLink($validated);
+        return $status === Password::RESET_LINK_SENT ? ["message" => "password_sent"] : response(["message" => 'An error occured'], 400);
+    }
+
+    public function reset_password($token, Request $request)
+    {
+
+        $validated = $request->validate(["email" => ["required", "email", "exists:users,email"]]);
+
+        $record = DB::table("password_resets")->select("token")->where("email", $validated["email"])->first();
+
+        return Hash::check($token, $record->token) ? ["message" => "Token is working"] : response(["message" => "token is not working"], 400);
+    }
+
+    public function update_password(Request $request)
+    {
+        $validated = $request->validate([
+            "token" => ["required"],
+            "email" => ["required", "email", "exists:users,email"],
+            "password" => ["required", "min:8", "confirmed"]
+        ]);
+
+        $status = Password::reset($validated, function ($user, $password) {
+            $user->password = bcrypt($password);
+            $user->save();
+            event(new PasswordReset(($user)));
+        });
+
+        return $status === Password::PASSWORD_RESET ? ["message" => "password updated"] : response(["message" => 'An error occured'], 400);
     }
 
     public function verify(EmailVerificationRequest $request)

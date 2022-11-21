@@ -41,13 +41,8 @@ Route::post("/register", [UserController::class, "store"]);
 
 Route::post("/login", [UserController::class, "login"]);
 
+Route::post("/forget-password", [UserController::class, "forget_password"])->name("password.email");
 
-// {
-//     "firstname": "thebest",
-//     "lastname": "thebest",
-//     "username": "thebest",
-//     "birthday": "2004-09-02",
-//     "email": "thebest@email.com",
-//     "password": "password",
-//     "password_confirmation": "password"
-// }
+Route::get("/reset-password/{token}", [UserController::class, "reset_password"])->name("password.reset");
+
+Route::post("/reset-password", [UserController::class, "update_password"])->name("password.update");

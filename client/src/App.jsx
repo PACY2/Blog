@@ -48,8 +48,6 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route element={<Auth_Route />}>
               <Route path="/email/verify/:id/:hash" element={<VerifyEmail />} />
-            </Route>
-            <Route element={<Auth_Route />}>
               <Route path="/profile" element={<Profile />} />
             </Route>
           </Route>

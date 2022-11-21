@@ -79,7 +79,7 @@ const Register = () => {
     }
 
     if (user_data.user) {
-      const path = "/";
+      let path = "/";
 
       if (location.state && location.state.from) {
         path =
