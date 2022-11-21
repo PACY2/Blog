@@ -1,22 +1,21 @@
-import { BsTriangleFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { MdRoomService } from "react-icons/md";
-import { BiHome, BiWorld, BiUser, BiPlus } from "react-icons/bi";
-import { TiArrowSortedDown } from "react-icons/ti";
-import { useState } from "react";
-import { useEffect } from "react";
+import { BiUser, BiPlus } from "react-icons/bi";
 import { useRef } from "react";
 import Nav_item from "./Nav_item";
 import Nav_item_dp from "./Nav_item_dp";
 import gsap from "gsap";
 import { useLayoutEffect } from "react";
-import { logout, fetch_user_state } from "../../features/Auth/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { reset_auth } from "../../features/Auth/UserSlice";
+import { useLogoutMutation } from "../../features/Auth/authApi";
+import { select_auth_connected } from "../../features/Auth/UserSlice";
 
 const Navbar = () => {
   const nav = useRef();
   const dispatch = useDispatch();
-  const user_data = useSelector(fetch_user_state);
+  const [logout] = useLogoutMutation();
+  const is_user_connected = useSelector(select_auth_connected);
 
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
@@ -36,8 +35,9 @@ const Navbar = () => {
     return () => ctx.revert();
   }, []);
 
-  function log_out() {
-    dispatch(logout());
+  async function log_out() {
+    await logout();
+    dispatch(reset_auth());
   }
 
   return (
@@ -53,7 +53,7 @@ const Navbar = () => {
       </div>
       <div>
         <Nav_item_dp icon={<BiUser />}>
-          {!user_data.user && (
+          {!is_user_connected && (
             <>
               <Link
                 className="text-pure-white hover:text-primary font-semibold rounded transition duration-200 py-1 pl-2 pr-3"
@@ -69,7 +69,7 @@ const Navbar = () => {
               </Link>
             </>
           )}
-          {user_data.user && (
+          {is_user_connected && (
             <>
               <Link
                 className="text-pure-white hover:text-primary font-semibold rounded transition duration-200 py-1 pl-2 pr-3"

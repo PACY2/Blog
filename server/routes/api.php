@@ -32,9 +32,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
 
     Route::get("/profile", [UserController::class, "profile"]);
 
-    Route::post("/logout", function () {
-        return ["message" => "loggedout"];
-    });
+    Route::post("/logout", [UserController::class, "logout"]);
 });
 
 Route::post("/register", [UserController::class, "store"]);

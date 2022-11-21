@@ -2,47 +2,54 @@ import { MdRoomService } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import auth from "../../assets/auth.jpg";
 import { useDispatch, useSelector } from "react-redux";
-import { login, fetch_user_state } from "./UserSlice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { SiSpinrilla } from "react-icons/si";
+import { useLoginMutation } from "./authApi";
+import { select_auth_user, set_auth } from "./UserSlice";
 
 const Login = () => {
-  const user_data = useSelector(fetch_user_state);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [login, { isLoading }] = useLoginMutation();
+  const user_data = useSelector(select_auth_user);
+
+  const handle_submit = async (values, { setSubmitting, setErrors }) => {
+    setSubmitting(false);
+    try {
+      const response = await login(values).unwrap();
+      dispatch(set_auth(response));
+    } catch (err) {
+      Object.entries(err.data.errors).forEach(([key, value]) => {
+        formik.setFieldError(key, value[0]);
+      });
+    }
+  };
+
+  const yup_schema = yup.object({
+    email: yup
+      .string()
+      .email("The Email is not valid")
+      .required("The Email Address field is required"),
+    password: yup
+      .string()
+      .min(8, "The Password must be at least 8 characters long")
+      .required("The Password field is required"),
+  });
 
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
-    validationSchema: yup.object({
-      email: yup
-        .string()
-        .email("The Email is not valid")
-        .required("The Email Address field is required"),
-      password: yup
-        .string()
-        .min(8, "The Password must be at least 8 characters long")
-        .required("The Password field is required"),
-    }),
-    onSubmit: (values, { setSubmitting, setErrors }) => {
-      setSubmitting(false);
-      dispatch(login(values));
-    },
+    validationSchema: yup_schema,
+    onSubmit: handle_submit,
   });
 
   useEffect(() => {
-    if (user_data.errors) {
-      Object.keys(user_data.errors).forEach((key) => {
-        formik.setFieldError(key, user_data.errors[key][0]);
-      });
-    }
-
-    if (user_data.user) {
+    if (user_data) {
       let path = "/";
 
       if (location.state && location.state.from) {
@@ -99,11 +106,7 @@ const Login = () => {
               type="submit"
               className="bg-primary w-full p-2 rounded max-w-[60%] flex justify-center items-center text-pure-white hover:opacity-90"
             >
-              {user_data.login_status === "loading" ? (
-                <SiSpinrilla className="animate-spin" />
-              ) : (
-                "login"
-              )}
+              {isLoading ? <SiSpinrilla className="animate-spin" /> : "Login"}
             </button>
           </div>
         </form>

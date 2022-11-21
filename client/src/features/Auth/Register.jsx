@@ -5,80 +5,87 @@ import { MdRoomService } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import auth from "../../assets/auth.jpg";
 import { useSelector, useDispatch } from "react-redux";
-import { fetch_user_state, register } from "./UserSlice";
 import { useFormik } from "formik";
 import Input from "../../components/Input";
 import * as yup from "yup";
 import differenceInYears from "date-fns/differenceInYears";
+import { useRegisterMutation } from "./authApi";
+import { select_auth_user, set_auth } from "./UserSlice";
 
 const Register = () => {
   const dispatch = useDispatch();
-  const user_data = useSelector(fetch_user_state);
   const navigate = useNavigate();
   const location = useLocation();
+  const user_data = useSelector(select_auth_user);
+  const [register, { isLoading, isSuccess, isError, errror }] =
+    useRegisterMutation();
+
+  const initialValues = {
+    firstname: "",
+    lastname: "",
+    username: "",
+    birthday: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
+  };
+
+  const validationSchema = yup.object({
+    firstname: yup
+      .string()
+      .min(3, "The First Name should be at least 3 characters long")
+      .required("The First Name is required"),
+    lastname: yup
+      .string()
+      .min(3, "The First Name should be at least 3 characters long")
+      .required("The Last Name is required"),
+    username: yup
+      .string()
+      .min(3, "The First Name should be at least 3 characters long")
+      .required("The Username Name is required"),
+    birthday: yup
+      .date()
+      .required("The Birthdate is required")
+      .test(
+        "birthday",
+        "You should be at least 18",
+        (value) => differenceInYears(new Date(), new Date(value)) >= 18
+      ),
+    email: yup
+      .string()
+      .email("The Email Address is not valid")
+      .required("The Email Address is required"),
+    password: yup
+      .string()
+      .min(8, "The Password should be at least 8 characters long")
+      .required("The Password is required"),
+    password_confirmation: yup
+      .string()
+      .min(8, "The Password Confirmation should be at least 8 characters long")
+      .required("The Password confirmation is required"),
+  });
+
+  const handle_submit = async (values, { setSubmitting }) => {
+    setSubmitting(false);
+    try {
+      const response = await register(values).unwrap();
+      dispatch(set_auth(response));
+    } catch (err) {
+      Object.entries(err.data.errors).forEach(([key, value]) => {
+        formik.setFieldError(key, value[0]);
+      });
+    }
+  };
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: {
-      firstname: "",
-      lastname: "",
-      username: "",
-      birthday: "",
-      email: "",
-      password: "",
-      password_confirmation: "",
-    },
-    validationSchema: yup.object({
-      firstname: yup
-        .string()
-        .min(3, "The First Name should be at least 3 characters long")
-        .required("The First Name is required"),
-      lastname: yup
-        .string()
-        .min(3, "The First Name should be at least 3 characters long")
-        .required("The Last Name is required"),
-      username: yup
-        .string()
-        .min(3, "The First Name should be at least 3 characters long")
-        .required("The Username Name is required"),
-      birthday: yup
-        .date()
-        .required("The Birthdate is required")
-        .test(
-          "birthday",
-          "You should be at least 18",
-          (value) => differenceInYears(new Date(), new Date(value)) >= 18
-        ),
-      email: yup
-        .string()
-        .email("The Email Address is not valid")
-        .required("The Email Address is required"),
-      password: yup
-        .string()
-        .min(8, "The Password should be at least 8 characters long")
-        .required("The Password is required"),
-      password_confirmation: yup
-        .string()
-        .min(
-          8,
-          "The Password Confirmation should be at least 8 characters long"
-        )
-        .required("The Password confirmation is required"),
-    }),
-    onSubmit: (values, { setSubmitting }) => {
-      setSubmitting(false);
-      dispatch(register(values));
-    },
+    initialValues,
+    validationSchema,
+    onSubmit: handle_submit,
   });
 
   useEffect(() => {
-    if (user_data.errors) {
-      Object.keys(user_data.errors).forEach((key) => {
-        formik.setFieldError(key, user_data.errors[key][0]);
-      });
-    }
-
-    if (user_data.user) {
+    if (user_data) {
       let path = "/";
 
       if (location.state && location.state.from) {
@@ -189,11 +196,11 @@ const Register = () => {
               type="submit"
               className="bg-primary w-full p-2 flex items-center justify-center rounded max-w-[60%] text-pure-white hover:opacity-90"
             >
-              {user_data.register_status === "loading" ? (
+              {isLoading ? (
                 <SiSpinrilla className="animate-spin" />
               ) : (
                 "Register"
-              )}
+              )}{" "}
             </button>
           </div>
         </form>

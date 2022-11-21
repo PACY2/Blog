@@ -63,12 +63,12 @@ class UserController extends Controller
     public function verify(EmailVerificationRequest $request)
     {
         if (auth("sanctum")->user()->hasVerifiedEmail()) {
-            return ["message" => "Email is already verified"];
+            return ["email_verified_at", auth("sanctum")->user()->email_verified_at];
         }
 
         $request->fulfill();
 
-        return ["massage", "Email veified successfully"];
+        return ["email_verified_at", auth("sanctum")->user()->email_verified_at];
     }
 
     public function resend_verification(Request $request)
@@ -89,6 +89,12 @@ class UserController extends Controller
         $user = auth("sanctum")->user();
         $user->load("role:id,name");
         return $user;
+    }
+
+    public function logout()
+    {
+        auth('sanctum')->user()->tokens()->delete();
+        return ["message" => "Logged out"];
     }
 
     public function login(Request $request)
