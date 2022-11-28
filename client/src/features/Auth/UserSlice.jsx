@@ -25,6 +25,7 @@ const UserSlice = createSlice({
       }
     },
     set_auth_field: (state, { payload }) => {
+      console.log(payload);
       state.value.user[payload[0]] = payload[1];
     },
     reset_auth: (state) => {

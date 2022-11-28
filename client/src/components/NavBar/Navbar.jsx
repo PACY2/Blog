@@ -10,30 +10,31 @@ import { useDispatch, useSelector } from "react-redux";
 import { reset_auth } from "../../features/Auth/UserSlice";
 import { useLogoutMutation } from "../../features/Auth/authApi";
 import { select_auth_connected } from "../../features/Auth/UserSlice";
+import { SiSpinrilla } from "react-icons/si";
 
 const Navbar = () => {
   const nav = useRef();
   const dispatch = useDispatch();
-  const [logout] = useLogoutMutation();
+  const [logout, { isLoading }] = useLogoutMutation();
   const is_user_connected = useSelector(select_auth_connected);
 
-  useLayoutEffect(() => {
-    let ctx = gsap.context(() => {
-      gsap.fromTo(
-        nav.current,
-        {
-          translateX: -40,
-          opacity: 0,
-        },
-        {
-          translateX: 0,
-          opacity: 1,
-          delay: 0.3,
-        }
-      );
-    });
-    return () => ctx.revert();
-  }, []);
+  // useLayoutEffect(() => {
+  //   let ctx = gsap.context(() => {
+  //     gsap.fromTo(
+  //       nav.current,
+  //       {
+  //         translateX: -40,
+  //         opacity: 0,
+  //       },
+  //       {
+  //         translateX: 0,
+  //         opacity: 1,
+  //         delay: 0.3,
+  //       }
+  //     );
+  //   });
+  //   return () => ctx.revert();
+  // }, []);
 
   async function log_out() {
     await logout();
@@ -52,7 +53,11 @@ const Navbar = () => {
         <Nav_item to="/login" text={<BiPlus />} desc="Add new post" />
       </div>
       <div>
-        <Nav_item_dp icon={<BiUser />}>
+        <Nav_item_dp
+          icon={
+            isLoading ? <SiSpinrilla className="animate-spin" /> : <BiUser />
+          }
+        >
           {!is_user_connected && (
             <>
               <Link

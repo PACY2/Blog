@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
             'lastname' => "mouhrach",
             'username' => "camado",
             "birthday" => "2003-09-02",
-            "role_id" => 2
+            "role_id" => 1
         ]);
 
         Post::factory(10)->create();

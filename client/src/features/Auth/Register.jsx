@@ -62,7 +62,11 @@ const Register = () => {
     password_confirmation: yup
       .string()
       .min(8, "The Password Confirmation should be at least 8 characters long")
-      .required("The Password confirmation is required"),
+      .required("The Password confirmation is required")
+      .oneOf(
+        [yup.ref("passowrd"), null],
+        "Password and Password Confirmation must match"
+      ),
   });
 
   const handle_submit = async (values, { setSubmitting }) => {

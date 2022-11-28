@@ -23,7 +23,26 @@ export const authApi = api.injectEndpoints({
       }),
     }),
     verifyEmail: builder.mutation({
-      query: () => window.location.pathname + window.location.search,
+      query: () => window.location.pathname + (window.location.search ?? ""),
+    }),
+    forgetPassword: builder.mutation({
+      query: (data) => ({
+        url: "/forget-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    verifyResetPasswordToken: builder.query({
+      query: () => ({
+        url: window.location.pathname + (window.location.search ?? ""),
+      }),
+    }),
+    updateResetedPassword: builder.mutation({
+      query: (data) => ({
+        url: "/reset-password",
+        method: "POST",
+        body: data,
+      }),
     }),
     getProfile: builder.query({
       query: () => "/profile",
@@ -37,4 +56,7 @@ export const {
   useRegisterMutation,
   useLogoutMutation,
   useVerifyEmailMutation,
+  useForgetPasswordMutation,
+  useVerifyResetPasswordTokenQuery,
+  useUpdateResetedPasswordMutation,
 } = authApi;

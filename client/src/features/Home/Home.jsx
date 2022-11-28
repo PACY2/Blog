@@ -11,26 +11,26 @@ import Useful_tags from "../../components/Useful_tags";
 const Home = () => {
   const container = useRef();
 
-  useLayoutEffect(() => {
-    let ctx = gsap.context(() => {
-      gsap.fromTo(
-        "#search",
-        { opacity: 0, translateY: -40 },
-        { opacity: 1, translateY: 0, delay: 0.3 }
-      );
-      gsap.fromTo(
-        ".postcard",
-        { opacity: 0, translateY: 40 },
-        { opacity: 1, translateY: 0, delay: 1.2, stagger: 0.1 }
-      );
-      gsap.fromTo(
-        ".right-side > div",
-        { opacity: 0, translateY: 40 },
-        { opacity: 1, translateY: 0, delay: 0.7, stagger: 0.1 }
-      );
-    });
-    return () => ctx.revert();
-  }, []);
+  // useLayoutEffect(() => {
+  //   let ctx = gsap.context(() => {
+  //     gsap.fromTo(
+  //       "#search",
+  //       { opacity: 0, translateY: -40 },
+  //       { opacity: 1, translateY: 0, delay: 0.3 }
+  //     );
+  //     gsap.fromTo(
+  //       ".postcard",
+  //       { opacity: 0, translateY: 40 },
+  //       { opacity: 1, translateY: 0, delay: 1.2, stagger: 0.1 }
+  //     );
+  //     gsap.fromTo(
+  //       ".right-side > div",
+  //       { opacity: 0, translateY: 40 },
+  //       { opacity: 1, translateY: 0, delay: 0.7, stagger: 0.1 }
+  //     );
+  //   });
+  //   return () => ctx.revert();
+  // }, []);
 
   return (
     <div ref={container} className="w-full h-full flex flex-col gap-2 p-2 ">

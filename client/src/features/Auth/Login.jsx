@@ -8,6 +8,7 @@ import * as yup from "yup";
 import { SiSpinrilla } from "react-icons/si";
 import { useLoginMutation } from "./authApi";
 import { select_auth_user, set_auth } from "./UserSlice";
+import Input from "../../components/Input";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ const Login = () => {
   const [login, { isLoading }] = useLoginMutation();
   const user_data = useSelector(select_auth_user);
 
-  const handle_submit = async (values, { setSubmitting, setErrors }) => {
+  const handle_submit = async (values, { setSubmitting }) => {
     setSubmitting(false);
     try {
       const response = await login(values).unwrap();
@@ -26,6 +27,11 @@ const Login = () => {
         formik.setFieldError(key, value[0]);
       });
     }
+  };
+
+  const initialValues = {
+    email: "",
+    password: "",
   };
 
   const yup_schema = yup.object({
@@ -40,10 +46,8 @@ const Login = () => {
   });
 
   const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
+    enableReinitialize: true,
+    initialValues,
     validationSchema: yup_schema,
     onSubmit: handle_submit,
   });
@@ -51,12 +55,10 @@ const Login = () => {
   useEffect(() => {
     if (user_data) {
       let path = "/";
-
       if (location.state && location.state.from) {
         path =
           location.state.from.pathname + (location.state.from.search ?? "");
       }
-
       navigate(path, { replace: true });
     }
   }, [user_data]);
@@ -77,30 +79,31 @@ const Login = () => {
               <MdRoomService />
             </Link>
           </h2>
-          <input
+
+          <Input
             placeholder="Email Address..."
-            className="outline-none border-2 border-dark-background focus:border-primary bg-dark-background p-3 rounded"
             type="email"
             name="email"
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
+            errors={
+              formik.errors.email && formik.touched.email && formik.errors.email
+            }
           />
-          <div className="pl-4 text-primary text-sm">
-            {formik.touched.email && formik.errors.email && formik.errors.email}
-          </div>
-          <input
+
+          <Input
             name="password"
             placeholder="Password..."
-            className="outline-none border-2 border-dark-background focus:border-primary bg-dark-background p-3 rounded"
             type="password"
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
-          />
-          <div className="pl-4 text-primary text-sm">
-            {formik.touched.password &&
+            errors={
               formik.errors.password &&
-              formik.errors.password}
-          </div>
+              formik.touched.password &&
+              formik.errors.password
+            }
+          />
+
           <div className="flex justify-center">
             <button
               type="submit"
