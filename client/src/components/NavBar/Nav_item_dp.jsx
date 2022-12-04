@@ -29,9 +29,9 @@ const Nav_item_dp = ({ children, icon }) => {
         <div className=" pointer-events-none">{icon}</div>
       </button>
       <div
-        className={`absolute left-20 bottom-0 z-50 bg-dark-background shadow-md p-1 rounded ${
+        className={`absolute left-16 bottom-0 z-50 bg-dark-background shadow-md p-1 rounded ${
           dp_hidden && "hidden"
-        } `}
+        } shadow-lg`}
       >
         <div className="relative flex items-end">
           <div className="absolute h-10 -left-4 text-sm text-dark-background flex items-center">

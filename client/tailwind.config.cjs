@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     colors: {
+      success: "#198754",
+      danger: "#dc3545",
+      info: "#0d6efd",
       background: "#262626",
       "dark-background": "#202020",
       primary: "#f52936",
