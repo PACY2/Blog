@@ -54,4 +54,9 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     {
         return $this->belongsTo(Role::class, "role_id", "id");
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, "user_id", "id");
+    }
 }

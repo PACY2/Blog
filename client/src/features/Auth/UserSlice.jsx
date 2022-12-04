@@ -5,7 +5,7 @@ const initialState = {
   value: {
     user: null,
     token: null,
-    connected: false,
+    connected: null,
   },
 };
 
@@ -35,6 +35,9 @@ const UserSlice = createSlice({
       localStorage.removeItem("token");
       info_notif("Your are now logged out");
     },
+    set_auth_user: (state, { payload }) => {
+      state.value.user = payload;
+    },
   },
 });
 
@@ -50,5 +53,6 @@ export const [
   (state) => state.user.value.token,
 ];
 
-export const { set_auth, reset_auth, set_auth_field } = UserSlice.actions;
+export const { set_auth, reset_auth, set_auth_field, set_auth_user } =
+  UserSlice.actions;
 export default UserSlice.reducer;

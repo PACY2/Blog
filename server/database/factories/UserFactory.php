@@ -26,8 +26,6 @@ class UserFactory extends Factory
             'lastname' => fake()->lastName(),
             'username' => fake()->userName(),
             "birthday" => fake()->date(),
-            // TODO: should be removed
-            "role_id" => rand(1, 10) > 5 ? 1 : null
         ];
     }
 

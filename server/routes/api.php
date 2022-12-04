@@ -22,7 +22,10 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::apiResource("posts", PostController::class);
-    Route::apiResource("users", UserController::class);
+
+    Route::apiResource("users", UserController::class)->except([
+        "show"
+    ]);
 
     Route::get('/email/verify/{id}/{hash}', [UserController::class, "verify"])
         ->middleware('signed')->name('verification.verify');
@@ -31,6 +34,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
         ->middleware('throttle:6,1')->name('verification.send');
 
     Route::get("/profile", [UserController::class, "profile"]);
+    Route::patch("/profile", [UserController::class, "update_profile"]);
 
     Route::post("/logout", [UserController::class, "logout"]);
 });
@@ -44,3 +48,5 @@ Route::post("/forget-password", [UserController::class, "forget_password"])->nam
 Route::get("/reset-password/{token}", [UserController::class, "reset_password"])->name("password.reset");
 
 Route::post("/reset-password", [UserController::class, "update_password"])->name("password.update");
+
+Route::get("/users/{id}", [UserController::class, "show"]);

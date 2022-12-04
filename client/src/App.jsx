@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import ForgetPassword from "./features/Auth/ForgetPassword";
 import ResetPassword from "./features/Auth/ResetPassword";
+import NonAuth_Route from "./components/NonAuth_Route";
 
 function App() {
   const dispatch = useDispatch();
@@ -31,7 +32,9 @@ function App() {
 
   useEffect(() => {
     if (localStorage.getItem("token") && isSuccess) {
-      dispatch(set_auth({ user: user_data }));
+      dispatch(
+        set_auth({ user: user_data, token: localStorage.getItem("token") })
+      );
     }
   }, [user_data]);
 
@@ -42,24 +45,22 @@ function App() {
         <Routes>
           <Route element={<Main />}>
             <Route path="/" element={<Home />} />
+            <Route element={<Auth_Route />}>
+              <Route path="/profile/:id" element={<Profile />} />
+            </Route>
           </Route>
           <Route element={<Auth />}>
-            {!user_connected && (
+            <Route element={<NonAuth_Route />}>
               <Route path="/register" element={<Register />} />
-            )}
-            {!user_connected && <Route path="/login" element={<Login />} />}
-            {!user_connected && (
+              <Route path="/login" element={<Login />} />
               <Route path="/forget-password" element={<ForgetPassword />} />
-            )}
-            {!user_connected && (
               <Route
                 path="/reset-password/:token"
                 element={<ResetPassword />}
               />
-            )}
+            </Route>
             <Route element={<Auth_Route />}>
               <Route path="/email/verify/:id/:hash" element={<VerifyEmail />} />
-              <Route path="/profile" element={<Profile />} />
             </Route>
           </Route>
           <Route path="/*" element={<Error_404 />} />

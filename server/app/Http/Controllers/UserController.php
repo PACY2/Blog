@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
@@ -94,8 +95,30 @@ class UserController extends Controller
     public function profile(Request $request)
     {
         $user = auth("sanctum")->user();
-        $user->load("role:id,name");
+        $user->load("role:id,name", "posts");
+        $user->loadCount("posts");
         return $user;
+    }
+
+    public function update_profile(Request $request)
+    {
+        $validated = $request->validate([
+            'firstname' => ["nullable", "min:3"],
+            'lastname' => ["nullable", "min:3"],
+            'username' => ["nullable", "unique:users,username", "min:3"],
+            "birthday" => ["nullable", "date", "min:3"],
+            'email' => ["nullable", "email", "unique:users,email", "min:3"],
+            'current_password' => ["required", "current_password", "min:8"],
+            'password' => ["nullable", "confirmed", "min:8"]
+        ]);
+
+        if (isset($validated["password"])) {
+            $validated["password"] = bcrypt($validated["password"]);
+        }
+
+        auth("sanctum")->user()->update($validated);
+
+        return $this->profile($request);
     }
 
     public function logout()
@@ -159,7 +182,16 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return User::findOrFail($id);
+        if (auth("sanctum")->check() && auth("sanctum")->user()->can("view", User::findOrFail($id))) {
+            $user = auth("sanctum")->user();
+        } else {
+            $user = User::select(["id",  "username", "role_id"])->findOrFail($id);
+        }
+
+        $user->load("role:id,name", "posts");
+        $user->loadCount("posts");
+
+        return $user;
     }
 
     /**
