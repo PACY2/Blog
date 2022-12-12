@@ -29,8 +29,8 @@ const VerifyEmail = () => {
       <div className="bg-dark-background p-2 rounded shadow-lg w-full  max-w-xl mx-4">
         <div className="h-48 flex items-center justify-center text-pure-white">
           {isLoading && <SiSpinrilla className="animate-spin w-12 h-12" />}
-          {isSuccess ||
-            (user_data.email_verified_at && <BiCheck className="w-24 h-24" />)}
+          {(isSuccess ||
+            user_data.email_verified_at) && <BiCheck className="w-24 h-24" />}
           {isError && <MdOutlineError className="w-12 h-12" />}
         </div>
         <div>
@@ -44,13 +44,13 @@ const VerifyEmail = () => {
                 <div className="text-primary">patient</div>
               </>
             )}
-            {isSuccess ||
-              (user_data.email_verified_at && (
+            {(isSuccess ||
+              user_data.email_verified_at) && (
                 <>
                   Your Email Address verified
                   <div className="text-primary">Successfully</div>
                 </>
-              ))}
+              )}
 
             {isError && (
               <>

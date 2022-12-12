@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import { api } from "../Api/api";
 
 export const authApi = api.injectEndpoints({
@@ -47,6 +48,23 @@ export const authApi = api.injectEndpoints({
     getProfile: builder.query({
       query: () => "/profile",
     }),
+    getProfileById: builder.query({
+      query: ({ id }) => `/users/${id}`,
+    }),
+    deleteProfile: builder.mutation({
+      query: (data) => ({
+        url: `/profile`,
+        method: "DELETE",
+        body: data,
+      }),
+    }),
+    patchProfile: builder.mutation({
+      query: (data) => ({
+        url: "/profile",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -59,4 +77,7 @@ export const {
   useForgetPasswordMutation,
   useVerifyResetPasswordTokenQuery,
   useUpdateResetedPasswordMutation,
+  usePatchProfileMutation,
+  useGetProfileByIdQuery,
+  useDeleteProfileMutation,
 } = authApi;

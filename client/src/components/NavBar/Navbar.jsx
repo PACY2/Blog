@@ -7,7 +7,7 @@ import Nav_item_dp from "./Nav_item_dp";
 import gsap from "gsap";
 import { useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { reset_auth } from "../../features/Auth/UserSlice";
+import { reset_auth, select_auth_user } from "../../features/Auth/UserSlice";
 import { useLogoutMutation } from "../../features/Auth/authApi";
 import { select_auth_connected } from "../../features/Auth/UserSlice";
 import { SiSpinrilla } from "react-icons/si";
@@ -17,6 +17,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const [logout, { isLoading }] = useLogoutMutation();
   const is_user_connected = useSelector(select_auth_connected);
+  const user_data = useSelector(select_auth_user);
 
   // useLayoutEffect(() => {
   //   let ctx = gsap.context(() => {
@@ -47,10 +48,13 @@ const Navbar = () => {
       className="w-14 bg-dark-background p-2 flex flex-col justify-between"
     >
       <div className="flex flex-col gap-2">
-        <div className="bg-primary h-10 flex justify-center items-center text-2xl text-pure-white rounded">
+        <Link
+          to="/"
+          className="bg-primary h-10 flex justify-center items-center text-2xl text-pure-white rounded"
+        >
           <MdRoomService />
-        </div>
-        <Nav_item to="/login" text={<BiPlus />} desc="Add new post" />
+        </Link>
+        <Nav_item to="/profile/5" text={<BiPlus />} desc="Add new post" />
       </div>
       <div>
         <Nav_item_dp
@@ -78,7 +82,7 @@ const Navbar = () => {
             <>
               <Link
                 className="text-pure-white hover:text-primary font-semibold rounded transition duration-200 py-1 pl-2 pr-3"
-                to="/profile"
+                to={`/profile/${user_data.id}`}
               >
                 Profile
               </Link>

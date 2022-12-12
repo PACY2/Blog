@@ -6,6 +6,11 @@
   a {
     @apply text-primary;
   }
+
+  .shadow-none {
+    box-shadow: none !important;
+  }
+
   .scrollbar::-webkit-scrollbar {
     @apply w-[8px] h-[20px] bg-primary;
   }

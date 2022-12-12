@@ -22,9 +22,12 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            // $table->foreignId("role_id")->default(1)->constrained("roles", "id")->onDelete("cascade");
-            $table->foreignId("role_id")->nullable()->constrained("roles", "id")->onDelete("cascade");
+            $table->string('cover')->nullable();
+            $table->string('profile')->nullable();
+            $table->foreignId("role_id")->default(1)->constrained("roles", "id")->onDelete("cascade");
             $table->rememberToken();
+            $table->softDeletes();
+            // $table->dropSoftDeletes();
             $table->timestamps();
         });
     }

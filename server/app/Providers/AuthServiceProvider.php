@@ -17,7 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\User' => 'App\Policies\UserPolicy',
     ];
 
     /**
@@ -30,10 +30,9 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         VerifyEmail::toMailUsing(function ($notifiable, $url) {
-
             $links = explode("verify", $url);
 
-            $passUrl = "http://localhost:5173/email/verify" . $links[1];
+            $passUrl =  env("APP_URL") . ":5173/email/verify" . $links[1];
 
             return (new MailMessage)
                 ->subject('Verify Email Address')
@@ -42,7 +41,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         ResetPassword::createUrlUsing(function ($user, string $token) {
-            return 'http://localhost:5173/reset-password/' . $token . "?email=" . $user->email;
+            return env("APP_URL") . ':5173/reset-password/' . $token . "?email=" . $user->email;
         });
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
@@ -19,28 +20,40 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 |
 */
 
-
+// Authenticated requests only
 Route::group(["middleware" => ["auth:sanctum"]], function () {
+
+    // Posts: Crud operations 
     Route::apiResource("posts", PostController::class);
-    Route::apiResource("users", UserController::class);
 
-    Route::get('/email/verify/{id}/{hash}', [UserController::class, "verify"])
+    // Users: Crud operations { show }
+    Route::apiResource("users", UserController::class)->except([
+        "show"
+    ]);
+
+    // handle_profile [ GET, PATCH, DELETE ]
+    Route::get("/profile", [AuthController::class, "profile"]);
+    Route::patch("/profile", [AuthController::class, "update_profile"]);
+    Route::delete("/profile", [AuthController::class, "destroy_profile"]);
+
+    // Email verification
+    Route::get('/email/verify/{id}/{hash}', [AuthController::class, "verify"])
         ->middleware('signed')->name('verification.verify');
-
-    Route::post('/email/verification-notification', [UserController::class, "resend_verification"])
+    Route::post('/email/verification-notification', [AuthController::class, "resend_verification"])
         ->middleware('throttle:6,1')->name('verification.send');
 
-    Route::get("/profile", [UserController::class, "profile"]);
-
-    Route::post("/logout", [UserController::class, "logout"]);
+    // logout
+    Route::post("/logout", [AuthController::class, "logout"]);
 });
 
-Route::post("/register", [UserController::class, "store"]);
+// Authentication
+Route::post("/register", [AuthController::class, "register"]);
+Route::post("/login", [AuthController::class, "login"]);
 
-Route::post("/login", [UserController::class, "login"]);
+// forget-password
+Route::post("/forget-password", [AuthController::class, "forget_password"])->name("password.email");
+Route::get("/reset-password/{token}", [AuthController::class, "reset_password"])->name("password.reset");
+Route::post("/reset-password", [AuthController::class, "update_password"])->name("password.update");
 
-Route::post("/forget-password", [UserController::class, "forget_password"])->name("password.email");
-
-Route::get("/reset-password/{token}", [UserController::class, "reset_password"])->name("password.reset");
-
-Route::post("/reset-password", [UserController::class, "update_password"])->name("password.update");
+// profile_by_id
+Route::get("/users/{id}", [AuthController::class, "profile_id"]);

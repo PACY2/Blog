@@ -11,6 +11,7 @@ import * as yup from "yup";
 import differenceInYears from "date-fns/differenceInYears";
 import { useRegisterMutation } from "./authApi";
 import { select_auth_user, set_auth } from "./UserSlice";
+import { danger_notif, success_notif } from "../../components/Notifications";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -64,7 +65,7 @@ const Register = () => {
       .min(8, "The Password Confirmation should be at least 8 characters long")
       .required("The Password confirmation is required")
       .oneOf(
-        [yup.ref("passowrd"), null],
+        [yup.ref("password"), null],
         "Password and Password Confirmation must match"
       ),
   });
@@ -73,8 +74,10 @@ const Register = () => {
     setSubmitting(false);
     try {
       const response = await register(values).unwrap();
-      dispatch(set_auth(response));
+      await dispatch(set_auth(response));
+      success_notif("Welcome");
     } catch (err) {
+      danger_notif("An error occured");
       Object.entries(err.data.errors).forEach(([key, value]) => {
         formik.setFieldError(key, value[0]);
       });
@@ -113,7 +116,7 @@ const Register = () => {
               <MdRoomService />
             </Link>
           </h2>
-          <div className="grid md:grid-cols-2 gap-2">
+          <div className="grid lg:grid-cols-2 gap-2">
             <Input
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
@@ -160,7 +163,7 @@ const Register = () => {
               }
             />
             <Input
-              className="col-start-1 col-end-3"
+              className="md:col-start-1 md:col-end-3"
               placeholder="Email Address"
               type="email"
               onBlur={formik.handleBlur}

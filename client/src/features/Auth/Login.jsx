@@ -9,6 +9,7 @@ import { SiSpinrilla } from "react-icons/si";
 import { useLoginMutation } from "./authApi";
 import { select_auth_user, set_auth } from "./UserSlice";
 import Input from "../../components/Input";
+import { danger_notif, success_notif } from "../../components/Notifications";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -22,7 +23,11 @@ const Login = () => {
     try {
       const response = await login(values).unwrap();
       dispatch(set_auth(response));
+      success_notif("Welcome Back");
     } catch (err) {
+      if (err.data.message) {
+        danger_notif(err.data.message);
+      }
       Object.entries(err.data.errors).forEach(([key, value]) => {
         formik.setFieldError(key, value[0]);
       });

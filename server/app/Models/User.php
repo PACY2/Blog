@@ -8,11 +8,11 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\CanResetPassword;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,9 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         'email',
         'email_verified_at',
         'password',
-        "role_id"
+        "role_id",
+        "profile",
+        "cover"
     ];
 
 
@@ -53,5 +55,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     public function role()
     {
         return $this->belongsTo(Role::class, "role_id", "id");
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, "user_id", "id");
     }
 }

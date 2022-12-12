@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import Modal from "../../components/Modal";
 import Navbar from "../../components/NavBar/Navbar";
 
 const Main = () => {
